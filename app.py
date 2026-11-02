@@ -2,6 +2,7 @@
 import sqlite3
 from pathlib import Path
 
+import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -54,7 +55,10 @@ tab1, tab2 = st.tabs(["Reconciliation", "Disputes"])
 with tab1:
     show("recon_summary", "Reconciliation status")
     df = show("exceptions_by_channel", "Exception rate by channel")
-    st.bar_chart(df, x="channel", y="exception_rate_pct")
+    st.altair_chart(alt.Chart(df).mark_bar().encode(
+        x=alt.X("channel", sort="-y"),
+        y=alt.Y("exception_rate_pct", title="exception rate (%)", scale=alt.Scale(zero=True))
+    ).properties(width="container"))
     show("orphan_settlements", "Settled by the network but missing from the switch log")
 with tab2:
     show("dispute_kpis", "Dispute KPIs by reason")
